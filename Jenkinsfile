@@ -135,4 +135,32 @@ pipeline{
             echo "========pipeline execution failed========"
         }
     }
+    stage('Docker Build and Tag') {
+           steps {
+              
+                bat 'docker build -t mywebapp:latest .' 
+                bat 'docker tag mywebapp ankit/mywebapp:latest'
+                //sh 'docker tag samplewebapp nikhilnidhi/samplewebapp:$BUILD_NUMBER'
+               
+          }
+     }
+     stage('Publish image to Docker Hub') {
+          
+            steps {
+        withDockerRegistry([ credentialsId: "dockerHub", url: "" ]) {
+          bat  'docker push ankit/mywebapp:latest'
+        //  sh  'docker push nikhilnidhi/samplewebapp:$BUILD_NUMBER' 
+        }
+                  
+          }
+        }
+     
+      stage('Run Docker container on Jenkins Agent') {
+             
+            steps 
+   {
+                bat "docker run -d -p 80:8080 ankit/mywebapp"
+ 
+            }
+        }
 }
