@@ -74,3 +74,16 @@ stages:
           containerRegistry: $(dockerRegistryServiceConnection)
           tags: |
             $(tag)
+      
+      - task: AzureRmWebAppDeployment@4
+        inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'demo'
+          appType: 'webAppContainer'
+          WebAppName: 'azuredevopsdemo'
+          DockerNamespace: 'azuredevops89.azurecr.io'
+          DockerRepository: 'methelegendsysdockerintegration'
+          DockerImageTag: 'latest'
+          AppSettings: '-DOCKER_REGISTRY_SERVER_PASSWORD dkgxnYA0pmEr3VznpB1v5hVu+Eoam6ln -DOCKER_REGISTRY_SERVER_URL https://azuredevops89.azurecr.io -DOCKER_REGISTRY_SERVER_USERNAME azuredevops89'
+
+
