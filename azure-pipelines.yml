@@ -50,10 +50,11 @@ steps:
     artifactName: 'first' 
     publishLocation: 'pipeline'
 
-- task: Docker@2
-  displayName: Build an image
+- task: DockerCompose@0
   inputs:
-    repository: $(imageName)
-    command: build
-    Dockerfile: Dockerfile
+    containerregistrytype: 'Azure Container Registry'
+    azureSubscription: 'demo'
+    azureContainerRegistry: '{"loginServer":"azuredevops89.azurecr.io", "id" : "/subscriptions/e25c0a93-619e-4b0f-8713-ada2c8e89425/resourceGroups/ankitkumar03/providers/Microsoft.ContainerRegistry/registries/azuredevops89"}'
+    dockerComposeFile: '**/docker-compose.yml'
+    action: 'Run a Docker Compose command'
 
