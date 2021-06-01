@@ -28,26 +28,63 @@ stages:
     pool:
       vmImage: $(vmImageName)
     steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        tags: |
-          $(tag)
+      - task: SonarCloudPrepare@1
+        inputs:
+          SonarCloud: 'sonarcloud-new'
+          organization: 'ankitkumar03'
+          scannerMode: 'Other'
+          extraProperties: |
+            # Additional properties that will be passed to the scanner,
+            # Put one key=value per line, example:
+            # sonar.exclusions=**/*.bin
+            sonar.projectKey=ankitkumar03_demo1
+            sonar.projectName=demo1
+      - task: Maven@3
+        inputs:
+          mavenPomFile: 'pom.xml'
+          mavenOptions: '-Xmx3072m'
+          javaHomeOption: 'JDKVersion'
+          jdkVersionOption: '1.11'
+          jdkArchitectureOption: 'x64'
+          publishJUnitResults: true
+          testResultsFiles: '**/surefire-reports/TEST-*.xml'
+          goals: 'package sonar:sonar'
+          sonarQubeRunAnalysis: True
+          sqMavenPluginVersionChoice: 'latest'
+
+
+      - task: SonarCloudAnalyze@1
+
+      - task: SonarCloudPublish@1
+        inputs:
+          pollingTimeoutSec: '300'
+
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: '$(Pipeline.Workspace)'
+          artifactName: 'first' 
+          publishLocation: 'pipeline'
+
+      - task: Docker@2
+        displayName: Build and push an image to container registry
+        inputs:
+          command: buildAndPush
+          repository: $(imageRepository)
+          dockerfile: $(dockerfilePath)
+          containerRegistry: $(dockerRegistryServiceConnection)
+          tags: |
+            $(tag)
           
-    - task: AzureRmWebAppDeployment@4
-      inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: 'demo'
-        appType: 'webAppContainer'
-        WebAppName: 'azuredevopsdemo'
-        DockerNamespace: 'devops89.azurecr.io'
-        DockerRepository: 'methelegendsysdockerintegration'
-        DockerImageTag: 'latest'
-        AppSettings: '-DOCKER_REGISTRY_SERVER_PASSWORD ImR/ZJ2O9RdoHIuGk7O7WDTUPcwoHOs3 -DOCKER_REGISTRY_SERVER_URL https://devops89.azurecr.io -DOCKER_REGISTRY_SERVER_USERNAME devops89'
+      - task: AzureRmWebAppDeployment@4
+        inputs:
+          ConnectionType: 'AzureRM'
+          azureSubscription: 'demo'
+          appType: 'webAppContainer'
+          WebAppName: 'azuredevopsdemo'
+          DockerNamespace: 'devops89.azurecr.io'
+          DockerRepository: 'methelegendsysdockerintegration'
+          DockerImageTag: 'latest'
+          AppSettings: '-DOCKER_REGISTRY_SERVER_PASSWORD ImR/ZJ2O9RdoHIuGk7O7WDTUPcwoHOs3 -DOCKER_REGISTRY_SERVER_URL https://devops89.azurecr.io -DOCKER_REGISTRY_SERVER_USERNAME devops89'
 
     
 
