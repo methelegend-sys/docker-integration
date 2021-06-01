@@ -12,7 +12,7 @@ variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: 'fefdd293-d92c-49da-8b59-b49401720a1b'
   imageRepository: 'methelegendsysdockerintegration'
-  containerRegistry: 'azuredevops89.azurecr.io'
+  containerRegistry: 'devops89.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
   tag: 'latest'
 
@@ -75,6 +75,7 @@ stages:
           tags: |
             $(tag)
       
+      
       - task: AzureRmWebAppDeployment@4
         inputs:
           ConnectionType: 'AzureRM'
@@ -84,6 +85,6 @@ stages:
           DockerNamespace: 'azuredevops89.azurecr.io'
           DockerRepository: 'methelegendsysdockerintegration'
           DockerImageTag: 'latest'
-          AppSettings: '-DOCKER_REGISTRY_SERVER_PASSWORD dkgxnYA0pmEr3VznpB1v5hVu+Eoam6ln -DOCKER_REGISTRY_SERVER_URL https://azuredevops89.azurecr.io -DOCKER_REGISTRY_SERVER_USERNAME azuredevops89'
+          AppSettings: '-DOCKER_REGISTRY_SERVER_PASSWORD ImR/ZJ2O9RdoHIuGk7O7WDTUPcwoHOs3 -DOCKER_REGISTRY_SERVER_URL https://devops89.azurecr.io -DOCKER_REGISTRY_SERVER_USERNAME devops89'
 
 
